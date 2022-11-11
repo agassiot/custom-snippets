@@ -1,11 +1,22 @@
 const { offlineFallback, warmStrategyCache } = require('workbox-recipes');
 const { CacheFirst } = require('workbox-strategies');
+const { StaleWhileRevalidate } = require('workbox-strategies');
 const { registerRoute } = require('workbox-routing');
 const { CacheableResponsePlugin } = require('workbox-cacheable-response');
 const { ExpirationPlugin } = require('workbox-expiration');
 const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
 
 precacheAndRoute(self.__WB_MANIFEST);
+
+const matchCallback = ({ request }) => {
+  console.log(request);
+  return (
+    // CSS
+    request.destination === 'style' ||
+    // JavaScript
+    request.destination === 'script'
+  );
+};
 
 const pageCache = new CacheFirst({
   cacheName: 'page-cache',
@@ -26,5 +37,13 @@ warmStrategyCache({
 
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
-// TODO: Implement asset caching
-registerRoute();
+//  Implement asset caching
+registerRoute(
+  ({ request }) => ['style', 'script', 'worker'].includes(request.destination),
+new StaleWhileRevalidate({
+  cacheName: 'cache-money',
+  plugins: [
+    new CacheableResponsePlugin({
+      statuses: [0,200]
+    })]})
+)
