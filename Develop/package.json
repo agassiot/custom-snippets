@@ -12,8 +12,11 @@
     "client": "cd client && npm start"
   },
   "keywords": [],
-  "author": "",
+  "author": "∆ix",
   "license": "ISC",
+  "engines":{
+    "node": "v18.11.0"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "if-env": "^1.0.4"
