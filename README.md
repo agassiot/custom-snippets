@@ -50,3 +50,5 @@ Caches data for offline use
 Github Page https://github.com/agassiot \
 Github Repository https://github.com/agassiot/custom-snippets \
 Live Link https://copy-and-pwaste.herokuapp.com/ 
+
+[text-editor-demo.webm](https://user-images.githubusercontent.com/61921580/201350794-9f515602-4581-4fe7-ba9c-88a69c19f102.webm)
