@@ -12,63 +12,35 @@ var initdb = async () =>
     },
   });
 
-var composeDB = (trans)=>{
-      (db)=> trans = db.transaction('jate','readwrite')
+const composeDB = (db)=>{
+      let trans = db.transaction('jate','readwrite')
       return trans.objectStore('jate')
     }
 
-var curryPost = (name, home, cell, email)=>{
-  (composed)=>{
-    return composed.add({name: name, home_phone: home, cell_phone: cell, email: email});
-  }
-}
+const curryGet= (composed)=>(x)=>composed.get(x);
+const curryPut = (composed)=>(content)=>composed.put({id: 1, text: content});
+  
 
-var curryGet = (content)=>{
-  (composed)=>{
-    return composed.get({id: 1, content: content});
-  }
-}
 
-var curryPut = (content)=>{
-  (composed)=>{
-    return composed.put({id: 1, content: content});
-  }
-}
-
-var curryDel = (id)=>{
-  (composed)=>{
-    return composed.delete(id);
-  }
-}
-
-var curriedPost = curryPost(composeDB);
-var curriedGet = curryGet(composeDB);
-var curriedPut = curryPut(composeDB);
-var curriedDel = curryDel(composeDB);
 
 //--------
-export var postDB = async (name, home, cell, email) => {
-  let sniperDB = await openDB('jate', 1);
-  let result = await curriedPost(sniperDB)(name,home,cell,email);
-  return console.log('save successful', result);
-}
 
-export var getDb = async (content) => {
+
+export var getDb = async () => {
   let sniperDB = await openDB('jate', 1);
-  let result = await curriedGet(sniperDB)(content)
-  return result.value;
+  const curriedGet = curryGet(composeDB(sniperDB))
+  let result = await curriedGet(1)
+  return result?.value;
 }
 
 export var putDb = async (content) => {
   let sniperDB = await openDB('jate', 1);
-  let result = await curriedPut(sniperDB)(content)
+  const curriedPut = curryPut(composeDB(sniperDB));
+  let result = await curriedPut(content)
   return console.log('save successful', result);
 }
 
-export var deleteDB = async (id) => {
-  let sniperDB = await openDB('jate', 1);
-  let result = await curriedDel(sniperDB)(id);
-  return result?.value;
-}
+
+
 
 initdb();
